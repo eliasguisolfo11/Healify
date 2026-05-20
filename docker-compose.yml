@@ -1,0 +1,111 @@
+version: '3.9'
+
+services:
+  doctor-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: doctors
+      POSTGRES_USER: healify
+      POSTGRES_PASSWORD: healify123
+    ports:
+      - "5432:5432"
+    volumes:
+      - doctor-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healify -d doctors"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  patient-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: patients
+      POSTGRES_USER: healify
+      POSTGRES_PASSWORD: healify123
+    ports:
+      - "5433:5432"
+    volumes:
+      - patient-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healify -d patients"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  appointment-db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: appointments
+      POSTGRES_USER: healify
+      POSTGRES_PASSWORD: healify123
+    ports:
+      - "5434:5432"
+    volumes:
+      - appointment-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U healify -d appointments"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  doctor-service:
+    build: ./services/doctor-service
+    ports:
+      - "4001:4001"
+    environment:
+      PORT: 4001
+      NODE_ENV: development
+      DB_HOST: doctor-db
+      DB_PORT: 5432
+      DB_NAME: doctors
+      DB_USER: healify
+      DB_PASSWORD: healify123
+    depends_on:
+      doctor-db:
+        condition: service_healthy
+
+  patient-service:
+    build: ./services/patient-service
+    ports:
+      - "4002:4002"
+    environment:
+      PORT: 4002
+      NODE_ENV: development
+      DB_HOST: patient-db
+      DB_PORT: 5432
+      DB_NAME: patients
+      DB_USER: healify
+      DB_PASSWORD: healify123
+      JWT_SECRET: supersecretkey
+      JWT_EXPIRES_IN: 24h
+    depends_on:
+      patient-db:
+        condition: service_healthy
+
+  appointment-service:
+    build: ./services/appointment-service
+    ports:
+      - "4003:4003"
+    environment:
+      PORT: 4003
+      NODE_ENV: development
+      DB_HOST: appointment-db
+      DB_PORT: 5432
+      DB_NAME: appointments
+      DB_USER: healify
+      DB_PASSWORD: healify123
+      DOCTOR_SERVICE_URL: http://doctor-service:4001
+      PATIENT_SERVICE_URL: http://patient-service:4002
+    depends_on:
+      appointment-db:
+        condition: service_healthy
+      doctor-service:
+        condition: service_started
+      patient-service:
+        condition: service_started
+
+volumes:
+  doctor-data:
+  patient-data:
+  appointment-data:
