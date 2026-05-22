@@ -167,9 +167,14 @@ healify-microservices/
 │   ├── doctor-service/       # Médicos, especialidades, horarios
 │   ├── patient-service/      # Pacientes, autenticación
 │   └── appointment-service/  # Turnos (orquestador)
+├── docs/
 ├── docker-compose.yml
+├── AGENTS.md
+├── package.json
 ├── plan.md
 └── README.md
 ```
 
 Cada servicio sigue la misma arquitectura: `domain/entities/` → `services/` → `controllers/` → `routes/`, con `middleware/` y `validators/`.
+
+El archivo `AGENTS.md` contiene instrucciones detalladas para asistentes de IA que trabajen sobre el proyecto.
