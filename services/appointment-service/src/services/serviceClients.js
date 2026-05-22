@@ -18,7 +18,7 @@ async function getPatient(id, token) {
 }
 
 async function getDoctorSlots(doctorId, date) {
-  const { data } = await doctorClient.get(`/api/doctors/${doctorId}/slots`, { params: { date } })
+  const { data } = await doctorClient.get(`/api/schedules/${doctorId}/slots`, { params: { date } })
   return data.slots
 }
 
