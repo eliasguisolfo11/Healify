@@ -17,7 +17,7 @@ async function register({ email, password, name, lastName, phone }) {
 
   const token = jwt.sign(
     { patientId: patient.id },
-    process.env.JWT_SECRET || 'supersecretkey',
+    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
   )
 
@@ -41,7 +41,7 @@ async function login({ email, password }) {
 
   const token = jwt.sign(
     { patientId: patient.id },
-    process.env.JWT_SECRET || 'supersecretkey',
+    process.env.JWT_SECRET,
     { expiresIn: process.env.JWT_EXPIRES_IN || '24h' }
   )
 

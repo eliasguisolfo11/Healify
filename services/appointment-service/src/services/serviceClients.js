@@ -11,8 +11,9 @@ async function getDoctor(id) {
   return data.doctor
 }
 
-async function getPatient(id) {
-  const { data } = await patientClient.get(`/api/patients/${id}`)
+async function getPatient(id, token) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {}
+  const { data } = await patientClient.get(`/api/patients/${id}`, { headers })
   return data.patient
 }
 

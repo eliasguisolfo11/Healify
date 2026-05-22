@@ -5,8 +5,8 @@ const { createSchedule } = require('../validators/scheduleValidators')
 
 const router = Router()
 
-router.get('/:id', controller.getByDoctor)
 router.get('/:id/slots', controller.getSlots)
+router.get('/:id', controller.getByDoctor)
 router.post('/', createSchedule, validate, controller.create)
 
 module.exports = router
