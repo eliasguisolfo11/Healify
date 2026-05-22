@@ -22,7 +22,7 @@ async function getById(req, res, next) {
 
 async function create(req, res, next) {
   try {
-    const appointment = await appointmentService.create(req.body)
+    const appointment = await appointmentService.create(req.body, req.token)
     res.status(201).json({ appointment })
   } catch (err) {
     next(err)

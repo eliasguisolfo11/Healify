@@ -22,7 +22,7 @@ async function findByDoctor(doctorId) {
   return Appointment.findAll({ where: { doctorId }, order: [['date', 'DESC']] })
 }
 
-async function create({ doctorId, patientId, date, time }) {
+async function create({ doctorId, patientId, date, time }, token) {
   const doctor = await getDoctor(doctorId)
   if (!doctor) {
     const error = new Error('Doctor not found')
@@ -30,7 +30,7 @@ async function create({ doctorId, patientId, date, time }) {
     throw error
   }
 
-  const patient = await getPatient(patientId)
+  const patient = await getPatient(patientId, token)
   if (!patient) {
     const error = new Error('Patient not found')
     error.status = 404
@@ -38,8 +38,8 @@ async function create({ doctorId, patientId, date, time }) {
   }
 
   const slots = await getDoctorSlots(doctorId, date)
-  const slotTaken = slots.some(s => s.time.startsWith(time))
-  if (!slotTaken) {
+  const slotAvailable = slots.some(s => s.time.startsWith(time))
+  if (!slotAvailable) {
     const error = new Error('Selected time is not available')
     error.status = 400
     throw error

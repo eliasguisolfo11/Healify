@@ -11,13 +11,14 @@ async function getDoctor(id) {
   return data.doctor
 }
 
-async function getPatient(id) {
-  const { data } = await patientClient.get(`/api/patients/${id}`)
+async function getPatient(id, token) {
+  const headers = token ? { Authorization: `Bearer ${token}` } : {}
+  const { data } = await patientClient.get(`/api/patients/${id}`, { headers })
   return data.patient
 }
 
 async function getDoctorSlots(doctorId, date) {
-  const { data } = await doctorClient.get(`/api/doctors/${doctorId}/slots`, { params: { date } })
+  const { data } = await doctorClient.get(`/api/schedules/${doctorId}/slots`, { params: { date } })
   return data.slots
 }
 

@@ -61,6 +61,8 @@ services:
       DB_NAME: doctors
       DB_USER: healify
       DB_PASSWORD: healify123
+      JWT_SECRET: supersecretkey
+      JWT_EXPIRES_IN: 24h
     depends_on:
       doctor-db:
         condition: service_healthy
@@ -97,6 +99,8 @@ services:
       DB_PASSWORD: healify123
       DOCTOR_SERVICE_URL: http://doctor-service:4001
       PATIENT_SERVICE_URL: http://patient-service:4002
+      JWT_SECRET: supersecretkey
+      JWT_EXPIRES_IN: 24h
     depends_on:
       appointment-db:
         condition: service_healthy
