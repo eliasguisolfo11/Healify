@@ -45,11 +45,22 @@ No test framework or test files exist. Root `package.json` has a placeholder `"t
 
 ## Auth
 
-`patient-service` uses JWT (`jsonwebtoken` + `bcrypt`). Protected routes validate via `middleware/auth.js` (Bearer token). Other services have no auth.
+All services use JWT auth (`jsonwebtoken` + `bcrypt`). `patient-service` issues tokens; `doctor-service` and `appointment-service` validate them with the same `JWT_SECRET`. Protected routes use `middleware/auth.js` (Bearer token). Mutating endpoints in all services require auth.
 
 ## Stack
 
 Node.js 18 + Express 4 + Sequelize 6 + pg 8 + PostgreSQL 15 (alpine). `appointment-service` additionally uses axios. All services use `dotenv`, `cors`, `express-validator`, `uuid`.
+
+## OpenCode Skills
+
+- **`nodejs-backend-patterns`** — Node.js/Express patterns for this codebase
+- **`ui-ux-pro-max`** — Design intelligence (50+ styles, 161 color palettes, 99 UX guidelines)
+
+Run `npx skills find <query>` to search for new skills.
+
+## Frontend plan
+
+See `docs/02-frontend-vue3.md` for the full Vue 3 MVP plan with design system specs (colors, typography, spacing, components, accessibility). Each component covers all states: loading, empty, error, data.
 
 ## What's not here
 
