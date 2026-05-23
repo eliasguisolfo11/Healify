@@ -1,4 +1,5 @@
 const scheduleService = require('../services/scheduleService')
+const AppError = require('../middleware/AppError')
 
 async function getByDoctor(req, res, next) {
   try {
@@ -21,7 +22,7 @@ async function create(req, res, next) {
 async function getSlots(req, res, next) {
   try {
     const { date } = req.query
-    if (!date) return res.status(400).json({ error: 'date query param is required' })
+    if (!date) throw new AppError('date query param is required', 400, 'VALIDATION_ERROR')
     const slots = await scheduleService.getSlots(req.params.id, date)
     res.json({ slots })
   } catch (err) {
