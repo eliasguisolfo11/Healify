@@ -1,7 +1,11 @@
 const { Doctor, Specialty } = require('../domain')
 
-async function findAll() {
-  return Doctor.findAll({ include: [{ model: Specialty, as: 'specialty' }] })
+async function findAll({ limit = 20, offset = 0 } = {}) {
+  return Doctor.findAndCountAll({
+    include: [{ model: Specialty, as: 'specialty' }],
+    limit: Math.min(limit, 100),
+    offset,
+  })
 }
 
 async function findById(id) {

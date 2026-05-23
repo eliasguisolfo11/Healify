@@ -1,9 +1,12 @@
 const patientService = require('../services/patientService')
+const AppError = require('../middleware/AppError')
 
 async function getAll(req, res, next) {
   try {
-    const patients = await patientService.findAll()
-    res.json({ patients })
+    const limit = parseInt(req.query.limit) || 20
+    const offset = parseInt(req.query.offset) || 0
+    const { rows: patients, count: total } = await patientService.findAll({ limit, offset })
+    res.json({ patients, total, limit, offset })
   } catch (err) {
     next(err)
   }
@@ -12,10 +15,10 @@ async function getAll(req, res, next) {
 async function getById(req, res, next) {
   try {
     if (req.patientId !== req.params.id) {
-      return res.status(403).json({ error: 'Forbidden' })
+      throw new AppError('Forbidden', 403, 'FORBIDDEN')
     }
     const patient = await patientService.findById(req.params.id)
-    if (!patient) return res.status(404).json({ error: 'Patient not found' })
+    if (!patient) throw new AppError('Patient not found', 404, 'NOT_FOUND')
     res.json({ patient })
   } catch (err) {
     next(err)
@@ -25,10 +28,10 @@ async function getById(req, res, next) {
 async function update(req, res, next) {
   try {
     if (req.patientId !== req.params.id) {
-      return res.status(403).json({ error: 'Forbidden' })
+      throw new AppError('Forbidden', 403, 'FORBIDDEN')
     }
     const patient = await patientService.update(req.params.id, req.body)
-    if (!patient) return res.status(404).json({ error: 'Patient not found' })
+    if (!patient) throw new AppError('Patient not found', 404, 'NOT_FOUND')
     res.json({ patient })
   } catch (err) {
     next(err)

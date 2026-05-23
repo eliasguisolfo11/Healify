@@ -1,9 +1,12 @@
 const doctorService = require('../services/doctorService')
+const AppError = require('../middleware/AppError')
 
 async function getAll(req, res, next) {
   try {
-    const doctors = await doctorService.findAll()
-    res.json({ doctors })
+    const limit = parseInt(req.query.limit) || 20
+    const offset = parseInt(req.query.offset) || 0
+    const { rows: doctors, count: total } = await doctorService.findAll({ limit, offset })
+    res.json({ doctors, total, limit, offset })
   } catch (err) {
     next(err)
   }
@@ -12,7 +15,7 @@ async function getAll(req, res, next) {
 async function getById(req, res, next) {
   try {
     const doctor = await doctorService.findById(req.params.id)
-    if (!doctor) return res.status(404).json({ error: 'Doctor not found' })
+    if (!doctor) throw new AppError('Doctor not found', 404, 'NOT_FOUND')
     res.json({ doctor })
   } catch (err) {
     next(err)
@@ -31,7 +34,7 @@ async function create(req, res, next) {
 async function update(req, res, next) {
   try {
     const doctor = await doctorService.update(req.params.id, req.body)
-    if (!doctor) return res.status(404).json({ error: 'Doctor not found' })
+    if (!doctor) throw new AppError('Doctor not found', 404, 'NOT_FOUND')
     res.json({ doctor })
   } catch (err) {
     next(err)
@@ -41,7 +44,7 @@ async function update(req, res, next) {
 async function remove(req, res, next) {
   try {
     const deleted = await doctorService.remove(req.params.id)
-    if (!deleted) return res.status(404).json({ error: 'Doctor not found' })
+    if (!deleted) throw new AppError('Doctor not found', 404, 'NOT_FOUND')
     res.status(204).end()
   } catch (err) {
     next(err)

@@ -1,5 +1,4 @@
 const { Schedule, Exception } = require('../domain')
-const { Op } = require('sequelize')
 
 async function findByDoctor(doctorId) {
   return Schedule.findAll({ where: { doctorId } })
@@ -23,8 +22,6 @@ async function getSlots(doctorId, date) {
 
   const isExceptional = exceptions.some(e => !e.isAvailable)
   if (isExceptional) return []
-
-  const exceptionOverride = exceptions.find(e => e.isAvailable)
 
   let slots = []
 
