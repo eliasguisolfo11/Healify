@@ -63,6 +63,7 @@ services:
       DB_PASSWORD: healify123
       JWT_SECRET: supersecretkey
       JWT_EXPIRES_IN: 24h
+      ADMIN_API_KEY: admin-secret-key-change-in-production
     depends_on:
       doctor-db:
         condition: service_healthy
