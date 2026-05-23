@@ -1,6 +1,7 @@
 require('dotenv').config()
 const express = require('express')
 const cors = require('cors')
+const morgan = require('morgan')
 const sequelize = require('./config/database')
 const routes = require('./routes')
 const errorHandler = require('./middleware/errorHandler')
@@ -16,6 +17,7 @@ const PORT = process.env.PORT || 4001
 
 app.use(cors())
 app.use(express.json())
+app.use(morgan('dev'))
 
 app.use('/api', routes)
 

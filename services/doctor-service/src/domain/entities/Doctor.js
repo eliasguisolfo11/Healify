@@ -30,6 +30,11 @@ const Doctor = sequelize.define('Doctor', {
     defaultValue: true,
     field: 'is_active',
   },
+}, {
+  indexes: [
+    { fields: ['email'] },
+    { fields: ['specialty_id'] },
+  ],
 })
 
 module.exports = Doctor

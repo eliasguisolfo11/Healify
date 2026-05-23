@@ -1,5 +1,6 @@
 const { DataTypes } = require('sequelize')
 const sequelize = require('../../config/database')
+const { APPOINTMENT_STATUS } = require('../../constants')
 
 const Appointment = sequelize.define('Appointment', {
   id: {
@@ -26,13 +27,20 @@ const Appointment = sequelize.define('Appointment', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM('pending', 'confirmed', 'cancelled', 'completed'),
-    defaultValue: 'pending',
+    type: DataTypes.ENUM(Object.values(APPOINTMENT_STATUS)),
+    defaultValue: APPOINTMENT_STATUS.PENDING,
   },
   reason: {
     type: DataTypes.STRING,
     allowNull: true,
   },
+}, {
+  indexes: [
+    { fields: ['doctor_id'] },
+    { fields: ['patient_id'] },
+    { fields: ['status'] },
+    { fields: ['doctor_id', 'date', 'time', 'status'] },
+  ],
 })
 
 module.exports = Appointment

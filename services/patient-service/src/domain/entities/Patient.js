@@ -30,6 +30,10 @@ const Patient = sequelize.define('Patient', {
     type: DataTypes.STRING,
     allowNull: true,
   },
+}, {
+  indexes: [
+    { fields: ['email'] },
+  ],
 })
 
 module.exports = Patient

@@ -6,9 +6,11 @@ async function findById(id) {
   })
 }
 
-async function findAll() {
-  return Patient.findAll({
+async function findAll({ limit = 20, offset = 0 } = {}) {
+  return Patient.findAndCountAll({
     attributes: { exclude: ['passwordHash'] },
+    limit: Math.min(limit, 100),
+    offset,
   })
 }
 

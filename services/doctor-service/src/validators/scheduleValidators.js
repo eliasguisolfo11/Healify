@@ -5,6 +5,12 @@ const createSchedule = [
   body('dayOfWeek').isInt({ min: 0, max: 6 }).withMessage('Day of week must be 0-6'),
   body('startTime').matches(/^\d{2}:\d{2}(:\d{2})?$/).withMessage('Start time must be HH:mm or HH:mm:ss'),
   body('endTime').matches(/^\d{2}:\d{2}(:\d{2})?$/).withMessage('End time must be HH:mm or HH:mm:ss'),
+  body('endTime').custom((endTime, { req }) => {
+    if (endTime <= req.body.startTime) {
+      throw new Error('End time must be after start time')
+    }
+    return true
+  }),
   body('slotDuration').optional().isInt({ min: 5 }).withMessage('Slot duration must be at least 5 minutes'),
 ]
 
