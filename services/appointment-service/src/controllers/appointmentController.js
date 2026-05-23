@@ -4,8 +4,8 @@ const AppError = require('../middleware/AppError')
 async function getAll(req, res, next) {
   try {
     const { doctorId, date, status } = req.query
-    const limit = parseInt(req.query.limit) || 20
-    const offset = parseInt(req.query.offset) || 0
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100)
+    const offset = parseInt(req.query.offset, 10) || 0
     const { rows: appointments, count: total } = await appointmentService.findAll({ patientId: req.patientId, doctorId, date, status, limit, offset })
     res.json({ appointments, total, limit, offset })
   } catch (err) {
@@ -16,7 +16,9 @@ async function getAll(req, res, next) {
 async function getById(req, res, next) {
   try {
     const appointment = await appointmentService.findById(req.params.id, req.patientId)
-    if (!appointment) throw new AppError('Appointment not found', 404, 'NOT_FOUND')
+    if (!appointment) {
+      throw new AppError('Appointment not found', 404, 'NOT_FOUND')
+    }
     res.json({ appointment })
   } catch (err) {
     next(err)
@@ -60,8 +62,10 @@ async function getByPatient(req, res, next) {
     if (req.patientId !== req.params.patientId) {
       throw new AppError('You can only view your own appointments', 403, 'FORBIDDEN')
     }
-    const appointments = await appointmentService.findByPatient(req.params.patientId)
-    res.json({ appointments })
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100)
+    const offset = parseInt(req.query.offset, 10) || 0
+    const { rows: appointments, count: total } = await appointmentService.findByPatient(req.params.patientId, { limit, offset })
+    res.json({ appointments, total, limit, offset })
   } catch (err) {
     next(err)
   }
@@ -69,8 +73,13 @@ async function getByPatient(req, res, next) {
 
 async function getByDoctor(req, res, next) {
   try {
-    const appointments = await appointmentService.findByDoctor(req.params.doctorId)
-    res.json({ appointments })
+    if (req.role !== 'admin') {
+      throw new AppError('Admin access required', 403, 'FORBIDDEN')
+    }
+    const limit = Math.min(parseInt(req.query.limit, 10) || 20, 100)
+    const offset = parseInt(req.query.offset, 10) || 0
+    const { rows: appointments, count: total } = await appointmentService.findByDoctor(req.params.doctorId, { limit, offset })
+    res.json({ appointments, total, limit, offset })
   } catch (err) {
     next(err)
   }

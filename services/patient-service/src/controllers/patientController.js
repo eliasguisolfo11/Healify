@@ -3,10 +3,8 @@ const AppError = require('../middleware/AppError')
 
 async function getAll(req, res, next) {
   try {
-    const limit = parseInt(req.query.limit) || 20
-    const offset = parseInt(req.query.offset) || 0
-    const { rows: patients, count: total } = await patientService.findAll({ limit, offset })
-    res.json({ patients, total, limit, offset })
+    const patient = await patientService.findById(req.patientId)
+    res.json({ patient })
   } catch (err) {
     next(err)
   }
