@@ -11,6 +11,7 @@ function authenticate(req, res, next) {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET)
     req.patientId = decoded.patientId
+    req.role = decoded.role || 'patient'
     req.token = token
     next()
   } catch {

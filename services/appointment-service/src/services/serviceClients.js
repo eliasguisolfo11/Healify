@@ -63,7 +63,6 @@ async function withRetry(service, fn, label) {
       console.error(`[service-client] ${label} failed in ${elapsed}ms (attempt ${attempt + 1}): ${err.message}`)
 
       if (err.response && err.response.status < 500) {
-        recordFailure(service)
         throw err
       }
 

@@ -5,9 +5,8 @@ const createAppointment = [
   body('patientId').isUUID().withMessage('Valid patient ID is required'),
   body('date').isISO8601().withMessage('Valid date is required (YYYY-MM-DD)'),
   body('date').custom((date) => {
-    const today = new Date()
-    today.setHours(0, 0, 0, 0)
-    if (new Date(date) < today) {
+    const today = new Date().toISOString().split('T')[0]
+    if (date < today) {
       throw new Error('Date must be today or later')
     }
     return true

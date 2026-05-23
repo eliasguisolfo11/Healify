@@ -20,16 +20,28 @@ async function findAll({ patientId, doctorId, date, status, limit = 20, offset =
 async function findById(id, patientId) {
   const appointment = await Appointment.findByPk(id)
   if (!appointment) return null
-  if (appointment.patientId !== patientId) return null
+  if (appointment.patientId !== patientId) {
+    throw new AppError('Forbidden', 403, 'FORBIDDEN')
+  }
   return appointment
 }
 
-async function findByPatient(patientId) {
-  return Appointment.findAll({ where: { patientId }, order: [['date', 'DESC']] })
+async function findByPatient(patientId, { limit = 20, offset = 0 } = {}) {
+  return Appointment.findAndCountAll({
+    where: { patientId },
+    order: [['date', 'DESC']],
+    limit: Math.min(limit, 100),
+    offset,
+  })
 }
 
-async function findByDoctor(doctorId) {
-  return Appointment.findAll({ where: { doctorId }, order: [['date', 'DESC']] })
+async function findByDoctor(doctorId, { limit = 20, offset = 0 } = {}) {
+  return Appointment.findAndCountAll({
+    where: { doctorId },
+    order: [['date', 'DESC']],
+    limit: Math.min(limit, 100),
+    offset,
+  })
 }
 
 async function create({ doctorId, patientId, date, time }, token) {
@@ -62,7 +74,9 @@ async function create({ doctorId, patientId, date, time }, token) {
 async function cancel(id, patientId, reason) {
   const appointment = await Appointment.findByPk(id)
   if (!appointment) return null
-  if (appointment.patientId !== patientId) return null
+  if (appointment.patientId !== patientId) {
+    throw new AppError('Forbidden', 403, 'FORBIDDEN')
+  }
   if (appointment.status === APPOINTMENT_STATUS.CANCELLED || appointment.status === APPOINTMENT_STATUS.COMPLETED) {
     throw new AppError(`Cannot cancel appointment with status ${appointment.status}`, 400, 'VALIDATION_ERROR')
   }
@@ -72,7 +86,9 @@ async function cancel(id, patientId, reason) {
 async function confirm(id, patientId) {
   const appointment = await Appointment.findByPk(id)
   if (!appointment) return null
-  if (appointment.patientId !== patientId) return null
+  if (appointment.patientId !== patientId) {
+    throw new AppError('Forbidden', 403, 'FORBIDDEN')
+  }
   return appointment.update({ status: APPOINTMENT_STATUS.CONFIRMED })
 }
 
